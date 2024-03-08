@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ginko", "Ginko.csproj", "{F1BBE29F-91AE-4A59-AFB6-B77648459E01}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{79AD846B-7E5B-4A0A-9899-D6B16F88355F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorpseLib", "..\CorpseLib\CorpseLib\CorpseLib.csproj", "{14F37E8E-057E-4782-ADA0-B14C62A9EFE8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F1BBE29F-91AE-4A59-AFB6-B77648459E01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1BBE29F-91AE-4A59-AFB6-B77648459E01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1BBE29F-91AE-4A59-AFB6-B77648459E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1BBE29F-91AE-4A59-AFB6-B77648459E01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14F37E8E-057E-4782-ADA0-B14C62A9EFE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14F37E8E-057E-4782-ADA0-B14C62A9EFE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14F37E8E-057E-4782-ADA0-B14C62A9EFE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14F37E8E-057E-4782-ADA0-B14C62A9EFE8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{14F37E8E-057E-4782-ADA0-B14C62A9EFE8} = {79AD846B-7E5B-4A0A-9899-D6B16F88355F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E34726D9-51DB-4B7F-B463-33CC6602FA28}
+	EndGlobalSection
+EndGlobal
