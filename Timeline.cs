@@ -75,6 +75,8 @@ namespace Ginko
 
         public int FindFirstElementAfterOrOnDate(DateTime date)
         {
+            if (m_Elements.Count == 0)
+                return 0;
             if (m_Elements[0].Date > date)
                 return 0;
             if (m_Elements[^1].Date < date)

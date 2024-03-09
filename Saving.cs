@@ -51,18 +51,38 @@ namespace Ginko
         private int GetMonthOfTransaction(Transaction transaction)
         {
             DateTime month = new(transaction.Date.Year, transaction.Date.Month, 1);
+            if (m_Months.Count == 0)
+            {
+                FinancialMonth newMonth = new(month, m_Amount);
+                m_Months.Add(newMonth);
+                return 0;
+            }
             int index = m_Months.FindFirstElementAfterOrOnDate(month);
             if (index == 0)
             {
-                //TODO Create all month between the one needed and the first one
-                //return 0;
-                return m_Months.Count;
+                if (month == m_Months[0].Date)
+                    return 0;
+                DateTime current = m_Months[0].Date.AddMonths(-1);
+                while (current >= month)
+                {
+                    FinancialMonth newMonth = new(current, m_Amount);
+                    newMonth.SetNextMonth(m_Months[0]);
+                    m_Months.Add(newMonth);
+                    current = current.AddMonths(-1);
+                }
+                return 0;
             }
             else if (index == m_Months.Count)
             {
-                //TODO Create all month between the last one and the one needed
-                //return m_Months.Count - 1;
-                return m_Months.Count;
+                DateTime current = m_Months[^1].Date.AddMonths(1);
+                while (current <= month)
+                {
+                    FinancialMonth newMonth = new(current, m_Amount);
+                    m_Months[^1].SetNextMonth(newMonth);
+                    m_Months.Add(newMonth);
+                    current = current.AddMonths(1);
+                }
+                return m_Months.Count - 1;
             }
             else
                 return index;
