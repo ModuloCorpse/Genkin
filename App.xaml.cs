@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Ginko
+namespace Genkin
 {
     /// <summary>
     /// Interaction logic for App.xaml

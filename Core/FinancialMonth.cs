@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using System.Transactions;
+using System.Xml.Linq;
 
-namespace Ginko
+namespace Genkin.Core
 {
     public class FinancialMonth(DateTime date, decimal amount) : ITimelineElement
     {
@@ -29,6 +32,14 @@ namespace Ginko
             foreach (Transaction holding in m_Holdings)
                 m_Amount += holding.Amount;
             m_NextMonth?.UpdateAmounts();
+        }
+
+        internal void UpdateCurrency(string currency)
+        {
+            foreach (Transaction transaction in m_Transactions)
+                transaction.SetCurrency(currency);
+            foreach (Transaction transaction in m_Holdings)
+                transaction.SetCurrency(currency);
         }
 
         internal void SetNextMonth(FinancialMonth nextMonth)
@@ -80,12 +91,15 @@ namespace Ginko
             }
         }
 
-        public List<Transaction> GetTransactionsBetweenDates(DateTime startDate, DateTime endDate)
+        public List<Transaction> GetTransactions(Filter filter)
         {
             List<Transaction> result = [];
-            int startIndex = m_Transactions.FindFirstElementAfterOrOnDate(startDate);
-            for (int i = startIndex; i < m_Transactions.Count && m_Transactions[i].Date <= endDate; i++)
-                result.Add(m_Transactions[i]);
+            int startIndex = m_Transactions.FindFirstElementAfterOrOnDate(filter.StartDate);
+            for (int i = startIndex; i < m_Transactions.Count && m_Transactions[i].Date <= filter.EndDate; i++)
+            {
+                if (filter.Match(m_Transactions[i]))
+                    result.Add(m_Transactions[i]);
+            }
             return result;
         }
 
@@ -107,21 +121,37 @@ namespace Ginko
             return amount;
         }
 
-        public override string ToString()
+        public string ToString(int indent)
         {
-            StringBuilder builder = new("[Month: ");
+            string indentStr = new(' ', indent);
+            StringBuilder builder = new(indentStr);
+            builder.Append("[Month: ");
             builder.Append(string.Format("Date = {0}, Real amount = {1}, Amount = {2}, Transactions = [", m_Date, m_RealAmount, m_Amount));
             if (m_Transactions.Count > 0)
+            {
                 builder.AppendLine();
+                builder.Append(indentStr);
+            }
             foreach (Transaction transaction in m_Transactions)
-                builder.AppendLine(transaction.ToString());
+            {
+                builder.AppendLine(string.Format("{0}{1}", new string(' ', indent + 1), transaction));
+                builder.Append(indentStr);
+            }
             builder.Append("], Holdings = [");
             if (m_Holdings.Count > 0)
+            {
                 builder.AppendLine();
+                builder.Append(indentStr);
+            }
             foreach (Transaction holding in m_Holdings)
-                builder.AppendLine(holding.ToString());
+            {
+                builder.AppendLine(string.Format("{0}{1}", new string(' ', indent + 1), holding));
+                builder.Append(indentStr);
+            }
             builder.Append("]]");
             return builder.ToString();
         }
+
+        public override string ToString() => ToString(0);
     }
 }

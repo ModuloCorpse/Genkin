@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Ginko
+namespace Genkin.Core
 {
     public class Timeline<T> : IEnumerable<T> where T : ITimelineElement
     {
@@ -35,7 +35,7 @@ namespace Ginko
             public bool MoveNext()
             {
                 m_Position++;
-                return (m_Position < m_List.Length);
+                return m_Position < m_List.Length;
             }
 
             public void Reset() => m_Position = -1;
@@ -87,7 +87,7 @@ namespace Ginko
             return index;
         }
 
-        public IEnumerator<T> GetEnumerator() => new TimelineEnumerator([..m_Elements]);
+        public IEnumerator<T> GetEnumerator() => new TimelineEnumerator([.. m_Elements]);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
