@@ -7,23 +7,23 @@ using System.Text;
 
 namespace Genkin.Core
 {
-    public class User : IEnumerable<Account>
+    public class User(Guid id, string path) : IEnumerable<Account>
     {
         private readonly List<Account> m_Accounts = [];
-        private readonly string m_Name;
-        private readonly string m_Path;
+        private readonly string m_Path = path;
         private string m_LoadPassword = string.Empty;
         private string m_SavePassword = string.Empty;
+        private readonly Guid m_ID = id;
 
         public Account this[int idx] { get => m_Accounts[idx]; }
 
-        public static User? NewUser(string name, string directory)
+        public static User? NewUser(string directory)
         {
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
             Guid guid = Guid.NewGuid();
             string path = Path.GetFullPath(Path.Combine(directory, guid.ToString()));
-            return new User(name, path);
+            return new User(guid, path);
         }
 
         public static List<User> LoadUsers(string directory)
@@ -39,9 +39,9 @@ namespace Genkin.Core
                 {
                     string absolute = Path.GetFullPath(file);
                     FileBytesReader reader = new(serializer, absolute);
-                    string userName = reader.Read<string>();
+                    Guid id = reader.Read<Guid>();
                     reader.Close();
-                    users.Add(new(userName, absolute));
+                    users.Add(new(id, absolute));
                 }
                 catch (Exception e)
                 {
@@ -60,17 +60,11 @@ namespace Genkin.Core
             return serializer;
         }
 
-        private User(string name, string path)
-        {
-            m_Name = name;
-            m_Path = path;
-        }
-
         public void Load()
         {
             BytesSerializer serializer = NewSerializer();
             BytesReader reader = new(serializer, File.ReadAllBytes(m_Path));
-            if (reader.Read<string>() == m_Name)
+            if (reader.Read<Guid>() == m_ID)
             {
                 byte[] decrypted = new AesEncryptor(m_LoadPassword).Decrypt(reader.ReadAll());
                 reader = new(serializer, decrypted);
@@ -88,7 +82,7 @@ namespace Genkin.Core
         {
             BytesSerializer serializer = NewSerializer();
             BytesWriter writer = new(serializer);
-            writer.Write(m_Name);
+            writer.Write(m_ID);
             BytesWriter accountWriter = new(serializer);
             accountWriter.Write(m_Accounts.Count);
             foreach (Account account in m_Accounts)
@@ -121,8 +115,8 @@ namespace Genkin.Core
 
         public override string ToString()
         {
-            StringBuilder builder = new("[User: Name = ");
-            builder.Append(m_Name);
+            StringBuilder builder = new("[User: ID = ");
+            builder.Append(m_ID);
             builder.Append(", Path = ");
             builder.Append(m_Path);
             builder.Append(", Accounts = [");

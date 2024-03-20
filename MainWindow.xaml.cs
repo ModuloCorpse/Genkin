@@ -1,6 +1,9 @@
 ﻿using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using CorpseLib.Json;
 using Genkin.Core;
 
 namespace Genkin
@@ -35,10 +38,29 @@ namespace Genkin
             }
         }
 
+        static MainWindow()
+        {
+            JsonHelper.RegisterSerializer(new UserInfo.JsonSerializer());
+        }
+
+        private readonly List<UserInfo> m_Users = [];
+
         public MainWindow()
         {
             InitializeComponent();
-            User? user = User.NewUser("Test", "./test");
+            MouseDown += Window_MouseDown;
+
+            if (File.Exists("settings.json"))
+            {
+                JsonObject settings = JsonParser.LoadFromFile("settings.json");
+                m_Users = settings.GetList<UserInfo>("users");
+            }
+
+            foreach (UserInfo info in m_Users)
+                UserScrollViewer.Children.Add(new UserScrollItem(info));
+
+            //Testing purpous
+            User? user = User.NewUser("./test");
             if (user != null)
             {
                 user.SetSavePassword("Password");
@@ -60,6 +82,83 @@ namespace Genkin
 
                 Directory.Delete("./test", true);
             }
+        }
+
+        private void AddUserInfo(UserInfo info)
+        {
+            m_Users.Add(info);
+            UserScrollViewer.Children.Add(new UserScrollItem(info));
+        }
+
+        private void NewUserInfo(string name, string path, Rect rect) => AddUserInfo(new(name, path, rect, Guid.NewGuid()));
+        private void NewUserInfo(string name, string defaultAvatar) => AddUserInfo(new(name, defaultAvatar, new(0, 0, 85, 85), Guid.NewGuid()));
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+
+        private void MaximizeRestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button)
+            {
+                if (WindowState == WindowState.Maximized)
+                    SystemCommands.RestoreWindow(this);
+                else
+                    SystemCommands.MaximizeWindow(this);
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        private void Window_SourceInitialized(object sender, EventArgs e)
+        {
+            Top = Properties.Settings.Default.Top;
+            Left = Properties.Settings.Default.Left;
+            Height = Properties.Settings.Default.Height;
+            Width = Properties.Settings.Default.Width;
+            if (Properties.Settings.Default.Maximized)
+                WindowState = WindowState.Maximized;
+            Activate();
+            Focus();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                Properties.Settings.Default.Top = RestoreBounds.Top;
+                Properties.Settings.Default.Left = RestoreBounds.Left;
+                Properties.Settings.Default.Height = RestoreBounds.Height;
+                Properties.Settings.Default.Width = RestoreBounds.Width;
+                Properties.Settings.Default.Maximized = true;
+            }
+            else
+            {
+                Properties.Settings.Default.Top = Top;
+                Properties.Settings.Default.Left = Left;
+                Properties.Settings.Default.Height = Height;
+                Properties.Settings.Default.Width = Width;
+                Properties.Settings.Default.Maximized = false;
+            }
+
+            Properties.Settings.Default.Save();
+
+            JsonObject settings = new()
+            {
+                { "users", m_Users }
+            };
+
+            JsonParser.WriteToFile("settings.json", settings);
         }
     }
 }

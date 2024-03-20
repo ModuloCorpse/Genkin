@@ -1,0 +1,5 @@
+﻿Teinte 1 (Dark) : #0B162C
+Teinte 2 (Background) : #1C2942
+Teinte 3 (Light) : #3B556D
+Teinte 4 (Menu bar) : #5FC2BA
+Teinte 5 (Text) : #FFFFFF

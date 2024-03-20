@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="Genkin.UserScrollItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Genkin"
+             mc:Ignorable="d"
+             Height="100"
+             d:DesignHeight="100"
+             d:DesignWidth="800"
+             Background="#0B162C">
+    <DockPanel LastChildFill="True">
+        <Separator  DockPanel.Dock="Bottom"/>
+        <DockPanel LastChildFill="True" DockPanel.Dock="Top">
+            <Border DockPanel.Dock="Left" Margin="5,0,0,0" BorderBrush="#5FC2BA" CornerRadius="5" BorderThickness="3" Width="86" Height="86">
+                <Image x:Name="ProfileImage" Width="80" Height="80" Source="/Climbing me.png" Stretch="UniformToFill"/>
+            </Border>
+            <Label x:Name="Arrow" DockPanel.Dock="Right" Margin="5,0,0,0" Foreground="#3B556D" Content=">" FontSize="60" VerticalAlignment="Center" FontFamily="Arial" />
+            <Label Margin="5,0,0,0" x:Name="ProfileName" Foreground="#FFFFFF" Content="User" FontSize="60" VerticalAlignment="Center" FontFamily="Arial" />
+        </DockPanel>
+    </DockPanel>
+</UserControl>
