@@ -3,8 +3,10 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CorpseLib.DataNotation;
 using CorpseLib.Json;
 using Genkin.Core;
+using DataObject = CorpseLib.DataNotation.DataObject;
 
 namespace Genkin
 {
@@ -40,7 +42,7 @@ namespace Genkin
 
         static MainWindow()
         {
-            JsonHelper.RegisterSerializer(new UserInfo.JsonSerializer());
+            DataHelper.RegisterSerializer(new UserInfo.DataSerializer());
         }
 
         private readonly List<UserInfo> m_Users = [];
@@ -52,7 +54,7 @@ namespace Genkin
 
             if (File.Exists("settings.json"))
             {
-                JsonObject settings = JsonParser.LoadFromFile("settings.json");
+                DataObject settings = JsonParser.LoadFromFile("settings.json");
                 m_Users = settings.GetList<UserInfo>("users");
             }
 
@@ -153,7 +155,7 @@ namespace Genkin
 
             Properties.Settings.Default.Save();
 
-            JsonObject settings = new()
+            DataObject settings = new()
             {
                 { "users", m_Users }
             };

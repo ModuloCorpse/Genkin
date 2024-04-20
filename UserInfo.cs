@@ -1,16 +1,17 @@
 ﻿using CorpseLib;
-using CorpseLib.Json;
+using CorpseLib.DataNotation;
 using Genkin.Core;
 using System.IO;
 using System.Windows;
+using DataObject = CorpseLib.DataNotation.DataObject;
 
 namespace Genkin
 {
     public class UserInfo(string name, string path, Rect rect, Guid id)
     {
-        public class JsonSerializer : AJsonSerializer<UserInfo>
+        public class DataSerializer : ADataSerializer<UserInfo>
         {
-            protected override OperationResult<UserInfo> Deserialize(JsonObject reader)
+            protected override OperationResult<UserInfo> Deserialize(DataObject reader)
             {
                 if (reader.TryGet("name", out string? name) && name != null &&
                     reader.TryGet("pp_path", out string? profilePicturePath) && profilePicturePath != null &&
@@ -23,7 +24,7 @@ namespace Genkin
                 return new("Deserialization error", "Bad json");
             }
 
-            protected override void Serialize(UserInfo obj, JsonObject writer)
+            protected override void Serialize(UserInfo obj, DataObject writer)
             {
                 writer["name"] = obj.m_Name;
                 writer["pp_path"] = obj.m_ProfilePicturePath;
